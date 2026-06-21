@@ -8,7 +8,9 @@
 #include <librmcs/data/datas.hpp>
 #include <librmcs/protocol/handler.hpp>
 #include <librmcs/spec/gpio.hpp>
+#include <librmcs/spec/rmcs_board_pro/can.hpp>
 #include <librmcs/spec/rmcs_board_pro/gpio.hpp>
+#include <librmcs/spec/rmcs_board_pro/uart.hpp>
 
 namespace librmcs::board {
 
@@ -35,16 +37,19 @@ class RmcsBoardPro final {
 public:
     class Callback : public data::DataCallback {
     public:
-        virtual void can0_receive_callback(const librmcs::data::CanDataView& data) { (void)data; }
-        virtual void can1_receive_callback(const librmcs::data::CanDataView& data) { (void)data; }
-        virtual void can2_receive_callback(const librmcs::data::CanDataView& data) { (void)data; }
-        virtual void can3_receive_callback(const librmcs::data::CanDataView& data) { (void)data; }
+        virtual void can_receive_callback(
+            const librmcs::spec::rmcs_board_pro::CanDescriptor& can,
+            const librmcs::data::CanDataView& data) {
+            (void)can;
+            (void)data;
+        }
 
-        virtual void dbus_receive_callback(const librmcs::data::UartDataView& data) { (void)data; }
-        virtual void uart0_receive_callback(const librmcs::data::UartDataView& data) { (void)data; }
-        virtual void uart1_receive_callback(const librmcs::data::UartDataView& data) { (void)data; }
-        virtual void uart2_receive_callback(const librmcs::data::UartDataView& data) { (void)data; }
-        virtual void uart3_receive_callback(const librmcs::data::UartDataView& data) { (void)data; }
+        virtual void uart_receive_callback(
+            const librmcs::spec::rmcs_board_pro::UartDescriptor& uart,
+            const librmcs::data::UartDataView& data) {
+            (void)uart;
+            (void)data;
+        }
 
         virtual void gpio_digital_read_result_callback(
             const librmcs::spec::rmcs_board_pro::GpioDescriptor& gpio,
@@ -72,24 +77,19 @@ public:
 
     public:
         bool can_receive_callback(data::DataId id, const data::CanDataView& data) final {
-            switch (id) {
-            case data::DataId::kCan0: can0_receive_callback(data); return true;
-            case data::DataId::kCan1: can1_receive_callback(data); return true;
-            case data::DataId::kCan2: can2_receive_callback(data); return true;
-            case data::DataId::kCan3: can3_receive_callback(data); return true;
-            default: return false;
-            }
+            const auto* descriptor = spec::rmcs_board_pro::kCanDescriptors.find(id);
+            if (descriptor == nullptr) [[unlikely]]
+                return false;
+            can_receive_callback(*descriptor, data);
+            return true;
         }
 
         bool uart_receive_callback(data::DataId id, const data::UartDataView& data) final {
-            switch (id) {
-            case data::DataId::kUartDbus: dbus_receive_callback(data); return true;
-            case data::DataId::kUart0: uart0_receive_callback(data); return true;
-            case data::DataId::kUart1: uart1_receive_callback(data); return true;
-            case data::DataId::kUart2: uart2_receive_callback(data); return true;
-            case data::DataId::kUart3: uart3_receive_callback(data); return true;
-            default: return false;
-            }
+            const auto* descriptor = spec::rmcs_board_pro::kUartDescriptors.find(id);
+            if (descriptor == nullptr) [[unlikely]]
+                return false;
+            uart_receive_callback(*descriptor, data);
+            return true;
         }
 
         bool gpio_digital_read_result_callback(
@@ -126,45 +126,19 @@ public:
         friend class RmcsBoardPro;
 
     public:
-        PacketBuilder& can0_transmit(const librmcs::data::CanDataView& data) {
-            if (!builder_.write_can(data::DataId::kCan0, data)) [[unlikely]]
-                throw std::invalid_argument{"CAN0 transmission failed: Invalid CAN data"};
-            return *this;
-        }
-        PacketBuilder& can1_transmit(const librmcs::data::CanDataView& data) {
-            if (!builder_.write_can(data::DataId::kCan1, data)) [[unlikely]]
-                throw std::invalid_argument{"CAN1 transmission failed: Invalid CAN data"};
-            return *this;
-        }
-        PacketBuilder& can2_transmit(const librmcs::data::CanDataView& data) {
-            if (!builder_.write_can(data::DataId::kCan2, data)) [[unlikely]]
-                throw std::invalid_argument{"CAN2 transmission failed: Invalid CAN data"};
-            return *this;
-        }
-        PacketBuilder& can3_transmit(const librmcs::data::CanDataView& data) {
-            if (!builder_.write_can(data::DataId::kCan3, data)) [[unlikely]]
-                throw std::invalid_argument{"CAN3 transmission failed: Invalid CAN data"};
+        PacketBuilder& can_transmit(
+            const librmcs::spec::rmcs_board_pro::CanDescriptor& can,
+            const librmcs::data::CanDataView& data) {
+            if (!builder_.write_can(can.data_id, data)) [[unlikely]]
+                throw std::invalid_argument{"CAN transmission failed: Invalid CAN data"};
             return *this;
         }
 
-        PacketBuilder& uart0_transmit(const librmcs::data::UartDataView& data) {
-            if (!builder_.write_uart(data::DataId::kUart0, data)) [[unlikely]]
-                throw std::invalid_argument{"UART0 transmission failed: Invalid UART data"};
-            return *this;
-        }
-        PacketBuilder& uart1_transmit(const librmcs::data::UartDataView& data) {
-            if (!builder_.write_uart(data::DataId::kUart1, data)) [[unlikely]]
-                throw std::invalid_argument{"UART1 transmission failed: Invalid UART data"};
-            return *this;
-        }
-        PacketBuilder& uart2_transmit(const librmcs::data::UartDataView& data) {
-            if (!builder_.write_uart(data::DataId::kUart2, data)) [[unlikely]]
-                throw std::invalid_argument{"UART2 transmission failed: Invalid UART data"};
-            return *this;
-        }
-        PacketBuilder& uart3_transmit(const librmcs::data::UartDataView& data) {
-            if (!builder_.write_uart(data::DataId::kUart3, data)) [[unlikely]]
-                throw std::invalid_argument{"UART3 transmission failed: Invalid UART data"};
+        PacketBuilder& uart_transmit(
+            const librmcs::spec::rmcs_board_pro::UartDescriptor& uart,
+            const librmcs::data::UartDataView& data) {
+            if (!builder_.write_uart(uart.data_id, data)) [[unlikely]]
+                throw std::invalid_argument{"UART transmission failed: Invalid UART data"};
             return *this;
         }
 
