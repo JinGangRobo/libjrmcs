@@ -24,6 +24,8 @@ public:
 
         bool write_uart(data::DataId field_id, const data::UartDataView& view) noexcept;
 
+        bool write_uart_config(data::DataId field_id, const data::UartConfigView& view) noexcept;
+
         bool write_gpio_digital_data(
             uint8_t channel_index, const data::GpioDigitalDataView& view) noexcept;
 

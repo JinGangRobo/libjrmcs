@@ -46,8 +46,18 @@ public:
         : TxBuffer(reinterpret_cast<UART_Type*>(board_config.base), board_config.dma_src_tx)
         , RxBuffer(reinterpret_cast<UART_Type*>(board_config.base), board_config.dma_src_rx)
         , data_id_(data_id)
-        , uart_base_(reinterpret_cast<UART_Type*>(board_config.base)) {
-        init_uart(board_config.irq_num, baudrate, parity);
+        , uart_base_(reinterpret_cast<UART_Type*>(board_config.base))
+        , uart_clock_hz_(init_uart(board_config.irq_num, baudrate, parity)) {}
+
+    bool handle_config(const data::UartConfigView& data) {
+        if (!data.baudrate.has_value() || *data.baudrate == 0) [[unlikely]]
+            return false;
+
+        TxBuffer::abort_transmit();
+
+        uart_set_baudrate(uart_base_, *data.baudrate, uart_clock_hz_);
+        uart_base_->LCR &= ~UART_LCR_DLAB_MASK;
+        return true;
     }
 
     void handle_downlink(const data::UartDataView& data) {
@@ -65,7 +75,7 @@ public:
     }
 
 private:
-    void init_uart(uint32_t irq_num, uint32_t baudrate, parity_setting_t parity) {
+    [[nodiscard]] uint32_t init_uart(uint32_t irq_num, uint32_t baudrate, parity_setting_t parity) {
         const uint32_t uart_clock = board::init_uart(uart_base_);
 
         uart_config_t config{};
@@ -91,6 +101,7 @@ private:
 
         core::utility::assert_always(uart_init(uart_base_, &config) == status_success);
         intc_m_enable_irq_with_priority(irq_num, 1);
+        return uart_clock;
     }
 
     void handle_uplink(
@@ -104,6 +115,7 @@ private:
 
     const data::DataId data_id_;
     UART_Type* uart_base_;
+    uint32_t uart_clock_hz_;
 };
 
 constexpr HardwareConfig kDbusBoardConfig = {

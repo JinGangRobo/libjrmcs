@@ -15,8 +15,8 @@ class UartDescriptors;
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class UartDescriptor : public spec::UartDescriptor {
     friend internal::UartDescriptors;
-    constexpr explicit UartDescriptor(data::DataId data_id)
-        : spec::UartDescriptor(data_id) {}
+    constexpr UartDescriptor(data::DataId data_id, data::DataId config_data_id)
+        : spec::UartDescriptor(data_id, config_data_id) {}
 
 public:
     UartDescriptor(const UartDescriptor&) = delete;
@@ -32,9 +32,9 @@ public:
 namespace internal {
 class UartDescriptors {
     static constexpr UartDescriptor kArray[]{
-        UartDescriptor{data::DataId::kUartDbus},
-        UartDescriptor{data::DataId::kUart0},
-        UartDescriptor{data::DataId::kUart1},
+        UartDescriptor{data::DataId::kUartDbus, data::DataId::kUartDbusConfig},
+        UartDescriptor{   data::DataId::kUart0,    data::DataId::kUart0Config},
+        UartDescriptor{   data::DataId::kUart1,    data::DataId::kUart1Config},
     };
 
 public:

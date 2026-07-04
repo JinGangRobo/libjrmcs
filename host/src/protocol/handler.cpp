@@ -83,6 +83,16 @@ public:
         return true;
     }
 
+    bool uart_config_deserialized_callback(
+        core::protocol::FieldId id, const data::UartConfigView& data) override {
+        if (!session_established())
+            return true;
+        (void)id;
+        (void)data;
+        logging::get_logger().error("Unexpected uart config field in uplink");
+        return false;
+    }
+
     bool gpio_digital_data_deserialized_callback(
         uint8_t channel_index, const data::GpioDigitalDataView& data) override {
         if (!session_established())
@@ -311,6 +321,11 @@ struct PacketBuilderImpl {
         return process_result(serializer_.write_uart(field_id, view));
     }
 
+    [[nodiscard]] bool
+        write_uart_config(data::DataId field_id, const data::UartConfigView& view) noexcept {
+        return process_result(serializer_.write_uart_config(field_id, view));
+    }
+
     [[nodiscard]] bool write_gpio_digital_data(
         uint8_t channel_index, const data::GpioDigitalDataView& view) noexcept {
         if (view.timestamp_quarter_us.has_value()) [[unlikely]]
@@ -377,6 +392,12 @@ bool Handler::PacketBuilder::write_can(
 bool Handler::PacketBuilder::write_uart(
     data::DataId field_id, const data::UartDataView& view) noexcept {
     return std::launder(reinterpret_cast<PacketBuilderImpl*>(storage_))->write_uart(field_id, view);
+}
+
+bool Handler::PacketBuilder::write_uart_config(
+    data::DataId field_id, const data::UartConfigView& view) noexcept {
+    return std::launder(reinterpret_cast<PacketBuilderImpl*>(storage_))
+        ->write_uart_config(field_id, view);
 }
 
 bool Handler::PacketBuilder::write_gpio_digital_data(

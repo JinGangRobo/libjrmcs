@@ -141,6 +141,24 @@ private:
         }
     }
 
+    bool uart_config_deserialized_callback(
+        core::protocol::FieldId id, const data::UartConfigView& data) override {
+        if (!session_established_)
+            return true;
+        switch (id) {
+        case data::DataId::kUartDbusConfig: uart::uart_dbus->handle_config(data); return true;
+        case data::DataId::kUart0Config: uart::uart_array[0]->handle_config(data); return true;
+        case data::DataId::kUart1Config: uart::uart_array[1]->handle_config(data); return true;
+#ifdef BOARD_UART2
+        case data::DataId::kUart2Config: uart::uart_array[2]->handle_config(data); return true;
+#endif
+#ifdef BOARD_UART3
+        case data::DataId::kUart3Config: uart::uart_array[3]->handle_config(data); return true;
+#endif
+        default: return false;
+        }
+    }
+
     bool gpio_digital_data_deserialized_callback(
         uint8_t channel_index, const data::GpioDigitalDataView& data) override {
         if (!session_established_)

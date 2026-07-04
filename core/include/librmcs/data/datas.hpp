@@ -32,6 +32,21 @@ enum class DataId : uint8_t {
     kImu = 15,
 
     kSession = 16,
+
+    kCan0Config = 17,
+    kCan1Config = 18,
+    kCan2Config = 19,
+    kCan3Config = 20,
+    kCan4Config = 21,
+    kCan5Config = 22,
+    kCan6Config = 23,
+    kCan7Config = 24,
+
+    kUartDbusConfig = 25,
+    kUart0Config = 26,
+    kUart1Config = 27,
+    kUart2Config = 28,
+    kUart3Config = 29,
 };
 
 enum class SessionType : uint8_t {
@@ -57,6 +72,10 @@ struct CanDataView {
 struct UartDataView {
     std::span<const std::byte> uart_data;
     bool idle_delimited = false;
+};
+
+struct UartConfigView {
+    std::optional<uint32_t> baudrate = std::nullopt;
 };
 
 struct GpioDigitalDataView {

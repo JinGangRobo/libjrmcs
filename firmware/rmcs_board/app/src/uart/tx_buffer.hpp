@@ -152,6 +152,11 @@ public:
         return true;
     }
 
+    void abort_transmit() {
+        core::utility::assert_always(dma_mgr_disable_channel(&dma_) == status_success);
+        tx_triggered_ = false;
+    }
+
 private:
     void init_dma(uint32_t dmamux_src) {
         dma_mgr_chn_conf_t config;

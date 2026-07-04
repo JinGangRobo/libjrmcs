@@ -128,6 +128,18 @@ private:
         }
     }
 
+    bool uart_config_deserialized_callback(
+        core::protocol::FieldId id, const data::UartConfigView& data) override {
+        if (!session_established_)
+            return true;
+        switch (id) {
+        case data::DataId::kUartDbusConfig: uart::uart_dbus->handle_config(data); return true;
+        case data::DataId::kUart1Config: uart::uart1->handle_config(data); return true;
+        case data::DataId::kUart2Config: uart::uart2->handle_config(data); return true;
+        default: return false;
+        }
+    }
+
     bool gpio_digital_data_deserialized_callback(
         uint8_t channel_index, const data::GpioDigitalDataView& data) override {
         if (!session_established_)

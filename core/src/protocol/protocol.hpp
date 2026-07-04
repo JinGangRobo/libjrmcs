@@ -48,6 +48,10 @@ struct UartHeaderExtendedLayout {
     using DataLengthExtended = BitfieldMember<6, 10>;
 };
 
+struct UartConfigPayloadLayout {
+    using Baudrate = BitfieldMember<4, 32, uint32_t>;
+};
+
 struct SessionHeaderLayout {
     using Type = BitfieldMember<4, 4, data::SessionType>;
     using Nonce = BitfieldMember<8, 32, uint32_t>;
@@ -86,6 +90,10 @@ struct UartHeaderExtended
     : utility::Bitfield<2>
     , layouts::UartHeaderLayout
     , layouts::UartHeaderExtendedLayout {};
+
+struct UartConfigPayload
+    : utility::Bitfield<5>
+    , layouts::UartConfigPayloadLayout {};
 
 struct SessionHeader
     : utility::Bitfield<5>

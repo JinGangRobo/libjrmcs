@@ -142,6 +142,15 @@ public:
             return *this;
         }
 
+        PacketBuilder& uart_config(
+            const librmcs::spec::rmcs_board_lite::UartDescriptor& uart,
+            const librmcs::data::UartConfigView& data) {
+            if (!builder_.write_uart_config(uart.config_data_id, data)) [[unlikely]]
+                throw std::invalid_argument{
+                    "UART configuration transmission failed: Invalid UART config"};
+            return *this;
+        }
+
         PacketBuilder& gpio_digital_write(
             const librmcs::spec::rmcs_board_lite::GpioDescriptor& gpio,
             const librmcs::data::GpioDigitalDataView& data) {
