@@ -23,6 +23,7 @@
 #include "firmware/c_board/app/src/usb/vendor.hpp"
 #include "firmware/c_board/app/src/utility/boot_mailbox.hpp"
 #include "firmware/c_board/app/src/utility/interrupt_lock.hpp"
+#include "firmware/c_board/app/src/watchdog/watchdog.hpp"
 
 int main() {
     SCB->VTOR = 0x08010000U;
@@ -37,6 +38,7 @@ App::App() {
     HAL_Init();
     SystemClock_Config();
     utility::boot_mailbox.clear();
+    watchdog::watchdog.init();
 
     // TIM9 must be initialized before TIM2.
     MX_TIM9_Init();
@@ -90,6 +92,7 @@ App::App() {
         uart::uart2->try_transmit();
         usb::vendor->try_transmit();
         uart::uart_dbus->try_transmit();
+        watchdog::watchdog->feed();
     }
 }
 

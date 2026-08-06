@@ -15,6 +15,7 @@
 #include "firmware/rmcs_board/app/src/usb/vendor.hpp"
 #include "firmware/rmcs_board/app/src/utility/boot_mailbox.hpp"
 #include "firmware/rmcs_board/app/src/utility/interrupt_lock.hpp"
+#include "firmware/rmcs_board/app/src/watchdog/watchdog.hpp"
 
 int main() { librmcs::firmware::app.init().run(); }
 
@@ -27,6 +28,8 @@ App::App() {
     board_init_usb();
     dma_mgr_init();
     boot::BootMailbox::clear();
+
+    watchdog::watchdog.init();
 
     led::led.init();
     timer::timer.init();
@@ -57,6 +60,7 @@ App::App() {
         for (auto& board_uart : uart::uart_array)
             board_uart->try_transmit();
         gpio::gpio->poll_periodic_input_samples();
+        watchdog::watchdog->feed();
     }
 }
 
