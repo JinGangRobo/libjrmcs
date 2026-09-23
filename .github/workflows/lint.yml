@@ -11,7 +11,7 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
     container:
-      image: qzhhhi/librmcs-ci:latest
+      image: mide233/librmcs-ci:latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
