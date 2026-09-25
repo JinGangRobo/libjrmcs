@@ -147,7 +147,7 @@ private: // Device Descriptor
         .bDeviceProtocol = 0x00,
         .bMaxPacketSize0 = CFG_TUD_ENDPOINT0_SIZE,
 
-        .idVendor = 0xA11C,
+        .idVendor = 0x0D00,
         .idProduct = LIBRMCS_USB_PID,
         .bcdDevice = 0x0300,
 
@@ -201,7 +201,7 @@ private: // Configuration Descriptor
 
 private: // String Descriptor
     static constexpr std::array<uint8_t, 2> kLanguageId = {0x09, 0x04};
-    static constexpr std::string_view kManufacturerString = "Alliance RoboMaster Team.";
+    static constexpr std::string_view kManufacturerString = "JinGang RoboMaster Team.";
     static constexpr std::string_view kProductString =
         "RMCS Agent v" LIBRMCS_PROJECT_VERSION_STRING;
     static constexpr std::string_view kDfuRuntimeString = "DFU Runtime";

@@ -126,7 +126,7 @@ public:
     explicit RmcsBoardPro(
         Callback& callback = default_callback_, std::string_view serial_filter = {},
         const AdvancedOptions& options = {})
-        : handler_(0xA11C, 0xAF01, serial_filter, options, callback) {}
+        : handler_(0x0D00, 0xAF01, serial_filter, options, callback) {}
 
     RmcsBoardPro(const RmcsBoardPro&) = delete;
     RmcsBoardPro& operator=(const RmcsBoardPro&) = delete;
