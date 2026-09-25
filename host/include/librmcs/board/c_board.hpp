@@ -124,7 +124,7 @@ public:
     explicit CBoard(
         Callback& callback = default_callback_, std::string_view serial_filter = {},
         const AdvancedOptions& options = {})
-        : handler_(0xA11C, 0xD401, serial_filter, options, callback) {}
+        : handler_(0x0D00, 0xD401, serial_filter, options, callback) {}
 
     CBoard(const CBoard&) = delete;
     CBoard& operator=(const CBoard&) = delete;

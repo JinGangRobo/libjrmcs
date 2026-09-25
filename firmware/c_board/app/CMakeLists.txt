@@ -58,7 +58,7 @@ librmcs_add_dfu_image(
     INPUT_ELF $<TARGET_FILE:c_board_app>
     OUTPUT_BINARY $<TARGET_FILE_DIR:c_board_app>/c_board_app.bin
     OUTPUT_DFU $<TARGET_FILE_DIR:c_board_app>/c_board_app.dfu
-    VENDOR_ID 0xA11C
+    VENDOR_ID 0x0D00
     PRODUCT_ID 0xD401
     DEVICE_ID 0x0300
     COMMENT "Generating c_board_app.dfu"

@@ -126,7 +126,7 @@ public:
     explicit RmcsBoardLite(
         Callback& callback = default_callback_, std::string_view serial_filter = {},
         const AdvancedOptions& options = {})
-        : handler_(0xA11C, 0xA801, serial_filter, options, callback) {}
+        : handler_(0x0D00, 0xA801, serial_filter, options, callback) {}
 
     RmcsBoardLite(const RmcsBoardLite&) = delete;
     RmcsBoardLite& operator=(const RmcsBoardLite&) = delete;

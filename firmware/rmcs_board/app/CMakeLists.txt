@@ -90,7 +90,7 @@ librmcs_add_dfu_image(
     TARGET ${APP_ELF_NAME}
     INPUT_BINARY "${EXECUTABLE_OUTPUT_PATH}/${APP_BIN_NAME}"
     OUTPUT_DFU "${EXECUTABLE_OUTPUT_PATH}/rmcs_board_app.dfu"
-    VENDOR_ID 0xA11C
+    VENDOR_ID 0x0D00
     PRODUCT_ID ${LIBRMCS_USB_PID}
     DEVICE_ID 0x0300
     COMMENT "Generating rmcs_board_app.dfu"
